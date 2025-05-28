@@ -16,6 +16,7 @@ import { ExportModule } from './integrations/export/export.module';
 import { ImportModule } from './integrations/import/import.module';
 import { SecurityModule } from './integrations/security/security.module';
 import { TelemetryModule } from './integrations/telemetry/telemetry.module';
+import { MigrationModule } from './integrations/migration/migration.module';
 
 const enterpriseModules = [];
 try {
@@ -35,6 +36,7 @@ try {
   imports: [
     CoreModule,
     DatabaseModule,
+    MigrationModule,
     EnvironmentModule,
     CollaborationModule,
     WsModule,

@@ -134,7 +134,7 @@ export class WorkspaceController {
     ) {
       throw new ForbiddenException();
     }
-    await this.workspaceService.deleteUser(user, dto.userId, workspace.id);
+    await this.workspaceService.deleteUser(user, dto.userId);
   }
 
   @HttpCode(HttpStatus.OK)
@@ -152,8 +152,8 @@ export class WorkspaceController {
     }
 
     return this.workspaceService.updateWorkspaceUserRole(
-      user,
-      workspaceUserRoleDto,
+      workspaceUserRoleDto.userId,
+      workspaceUserRoleDto.role,
       workspace.id,
     );
   }

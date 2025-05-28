@@ -142,6 +142,9 @@ importers:
       '@tiptap/suggestion':
         specifier: ^2.10.3
         version: 2.10.3(@tiptap/core@2.10.3(@tiptap/pm@2.10.3))(@tiptap/pm@2.10.3)
+      bcrypt:
+        specifier: ^5.1.1
+        version: 5.1.1
       bytes:
         specifier: ^3.1.2
         version: 3.1.2
@@ -191,9 +194,21 @@ importers:
       concurrently:
         specifier: ^9.1.2
         version: 9.1.2
+      kysely:
+        specifier: ^0.27.5
+        version: 0.27.5
+      kysely-migration-cli:
+        specifier: ^0.4.2
+        version: 0.4.2
       nx:
         specifier: 20.4.5
         version: 20.4.5(@swc/core@1.5.25(@swc/helpers@0.5.5))
+      pg:
+        specifier: ^8.13.3
+        version: 8.13.3
+      ts-node:
+        specifier: ^10.9.2
+        version: 10.9.2(@swc/core@1.5.25(@swc/helpers@0.5.5))(@types/node@22.13.4)(typescript@5.7.3)
       tsx:
         specifier: ^4.19.3
         version: 4.19.3

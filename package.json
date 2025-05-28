@@ -60,6 +60,7 @@
     "@tiptap/react": "^2.10.3",
     "@tiptap/starter-kit": "^2.10.3",
     "@tiptap/suggestion": "^2.10.3",
+    "bcrypt": "^5.1.1",
     "bytes": "^3.1.2",
     "cross-env": "^7.0.3",
     "date-fns": "^4.1.0",
@@ -78,7 +79,11 @@
     "@types/bytes": "^3.1.5",
     "@types/uuid": "^10.0.0",
     "concurrently": "^9.1.2",
+    "kysely": "^0.27.5",
+    "kysely-migration-cli": "^0.4.2",
     "nx": "20.4.5",
+    "pg": "^8.13.3",
+    "ts-node": "^10.9.2",
     "tsx": "^4.19.3"
   },
   "workspaces": {

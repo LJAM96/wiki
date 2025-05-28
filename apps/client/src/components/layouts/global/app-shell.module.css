@@ -1,5 +1,7 @@
+
+/* Use theme variable for backgrounds to allow full theme control */
 .header, .navbar, .aside {
-  background-color: light-dark(#f6f7f9, var(--mantine-color-dark-8));
+  background-color: var(--mantine-color-body) !important;
 }
 
 .navbar, .aside {
@@ -27,5 +29,3 @@
     background: light-dark(var(--mantine-color-gray-4), var(--mantine-color-dark-5))
   }
 }
-
-

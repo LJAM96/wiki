@@ -13,7 +13,7 @@ export default function WorkspaceSettings() {
       <Helmet>
         <title>Workspace Settings - {getAppName()}</title>
       </Helmet>
-      <SettingsTitle title={t("General")} />
+      <SettingsTitle title={t("Workspace & Branding")} />
       <WorkspaceNameForm />
 
       {isCloud() && (

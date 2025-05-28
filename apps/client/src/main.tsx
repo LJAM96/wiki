@@ -1,6 +1,8 @@
 import "@mantine/core/styles.css";
 import "@mantine/spotlight/styles.css";
 import "@mantine/notifications/styles.css";
+import "./styles/custom-themes.css";
+import "./styles/theme-overrides.css";
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
 import { mantineCssResolver, theme } from '@/theme';
@@ -22,7 +24,6 @@ export const queryClient = new QueryClient({
     },
   },
 });
-
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement

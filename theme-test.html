@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Theme Test</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid;
+        }
+
+        .theme-selector {
+            margin-bottom: 20px;
+        }
+
+        select {
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid;
+            background: transparent;
+            color: inherit;
+        }
+
+        .demo-section {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid;
+        }
+
+        h1, h2, h3 {
+            margin-top: 0;
+        }
+
+        .card {
+            background: var(--mantine-color-body);
+            border: 1px solid var(--mantine-color-default-border);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 10px 0;
+        }
+
+        .button {
+            background: var(--mantine-color-blue-filled);
+            color: var(--mantine-color-blue-filled-hover);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        /* Default (light) theme */
+        body {
+            --mantine-color-body: #ffffff;
+            --mantine-color-text: #000000;
+            --mantine-color-default-border: #dee2e6;
+            --mantine-color-blue-filled: #228be6;
+            --mantine-color-blue-filled-hover: #ffffff;
+            background-color: var(--mantine-color-body);
+            color: var(--mantine-color-text);
+        }        .container, .demo-section, select {
+            border-color: var(--mantine-color-default-border);
+        }
+
+        /* Nord Light Theme */
+        .theme-nord-light {
+            --mantine-color-body: #eceff4;
+            --mantine-color-text: #2e3440;
+            --mantine-color-default-border: #d8dee9;
+            --mantine-color-blue-filled: #5e81ac;
+            --mantine-color-blue-filled-hover: #ffffff;
+            background: #eceff4 !important;
+            color-scheme: light;
+        }
+
+        /* Nord Dark Theme */
+        .theme-nord-dark {
+            --mantine-color-body: #2e3440;
+            --mantine-color-text: #eceff4;
+            --mantine-color-default-border: #4c566a;
+            --mantine-color-blue-filled: #5e81ac;
+            --mantine-color-blue-filled-hover: #ffffff;
+            background: #2e3440 !important;
+            color-scheme: dark;
+        }
+
+        /* Tokyo Light Theme */
+        .theme-tokyo-light {
+            --mantine-color-body: #d5d6db;
+            --mantine-color-text: #4a5057;
+            --mantine-color-default-border: #9699a3;
+            --mantine-color-blue-filled: #34548a;
+            --mantine-color-blue-filled-hover: #ffffff;
+            background: #d5d6db !important;
+            color-scheme: light;
+        }
+
+        /* Tokyo Dark Theme */
+        .theme-tokyo-dark {
+            --mantine-color-body: #1a1b26;
+            --mantine-color-text: #c0caf5;
+            --mantine-color-default-border: #565f89;
+            --mantine-color-blue-filled: #7aa2f7;
+            --mantine-color-blue-filled-hover: #ffffff;
+            background: #1a1b26 !important;
+            color-scheme: dark;
+        }
+
+        /* Dracula Dark Theme */
+        .theme-dracula-dark {
+            --mantine-color-body: #282a36;
+            --mantine-color-text: #f8f8f2;
+            --mantine-color-default-border: #6272a4;
+            --mantine-color-blue-filled: #8be9fd;
+            --mantine-color-blue-filled-hover: #282a36;
+            background: #282a36 !important;
+            color-scheme: dark;
+        }
+
+        /* Gruvbox Dark Theme */
+        .theme-gruvbox-dark {
+            --mantine-color-body: #282828;
+            --mantine-color-text: #ebdbb2;
+            --mantine-color-default-border: #665c54;
+            --mantine-color-blue-filled: #83a598;
+            --mantine-color-blue-filled-hover: #282828;
+            background: #282828 !important;
+            color-scheme: dark;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Docmost Theme Test</h1>
+        
+        <div class="theme-selector">
+            <label for="themeSelect">Select Theme:</label>
+            <select id="themeSelect">
+                <option value="">Default (Fluent Light)</option>
+                <option value="theme-nord-light">Nord Light</option>
+                <option value="theme-nord-dark">Nord Dark</option>
+                <option value="theme-tokyo-light">Tokyo Light</option>                <option value="theme-tokyo-dark">Tokyo Dark</option>
+                <option value="theme-dracula-dark">Dracula Dark</option>
+                <option value="theme-gruvbox-dark">Gruvbox Dark</option>
+            </select>
+        </div>
+
+        <div class="demo-section">
+            <h2>Demo Content</h2>
+            <p>This is a paragraph to test text color and background color changes.</p>
+            
+            <div class="card">
+                <h3>Card Component</h3>
+                <p>This card should change background and border colors based on the selected theme.</p>
+                <button class="button">Sample Button</button>
+            </div>
+            
+            <div class="card">
+                <h3>Another Card</h3>
+                <p>Multiple cards should all respond to theme changes consistently.</p>
+                <button class="button">Another Button</button>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h2>CSS Variables Test</h2>
+            <p><strong>Background:</strong> <span id="bg-color"></span></p>
+            <p><strong>Text Color:</strong> <span id="text-color"></span></p>
+            <p><strong>Border Color:</strong> <span id="border-color"></span></p>
+        </div>
+    </div>
+
+    <script>
+        const themeSelect = document.getElementById('themeSelect');
+        const body = document.body;
+        const bgColorSpan = document.getElementById('bg-color');
+        const textColorSpan = document.getElementById('text-color');
+        const borderColorSpan = document.getElementById('border-color');
+
+        function updateColorDisplay() {
+            const computedStyle = window.getComputedStyle(body);
+            bgColorSpan.textContent = computedStyle.getPropertyValue('--mantine-color-body') || computedStyle.backgroundColor;
+            textColorSpan.textContent = computedStyle.getPropertyValue('--mantine-color-text') || computedStyle.color;
+            borderColorSpan.textContent = computedStyle.getPropertyValue('--mantine-color-default-border');
+        }
+
+        themeSelect.addEventListener('change', function() {
+            // Remove all theme classes
+            body.className = body.className.replace(/theme-[\w-]+/g, '').trim();
+            
+            // Add the selected theme class
+            if (this.value) {
+                body.classList.add(this.value);
+            }
+            
+            // Update color display
+            setTimeout(updateColorDisplay, 100);
+        });
+
+        // Initial color display
+        updateColorDisplay();
+    </script>
+</body>
+</html>

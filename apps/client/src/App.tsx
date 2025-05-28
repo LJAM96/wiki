@@ -1,4 +1,5 @@
 import { Navigate, Route, Routes } from "react-router-dom";
+import "@/styles/theme-overrides.css";
 import SetupWorkspace from "@/pages/auth/setup-workspace.tsx";
 import LoginPage from "@/pages/auth/login";
 import Home from "@/pages/dashboard/home";
@@ -31,6 +32,7 @@ import Shares from "@/pages/settings/shares/shares.tsx";
 import ShareLayout from "@/features/share/components/share-layout.tsx";
 import ShareRedirect from '@/pages/share/share-redirect.tsx';
 import { useTrackOrigin } from "@/hooks/use-track-origin";
+import { ThemeInitializer } from "@/components/theme-initializer.tsx";
 
 export default function App() {
   const { t } = useTranslation();
@@ -39,6 +41,7 @@ export default function App() {
 
   return (
     <>
+      <ThemeInitializer />
       <Routes>
         <Route index element={<Navigate to="/home" />} />
         <Route path={"/login"} element={<LoginPage />} />

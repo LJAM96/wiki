@@ -5,6 +5,9 @@ export interface IWorkspace {
   name: string;
   description: string;
   logo: string;
+  favicon?: string;
+  icon?: string;
+  brandName?: string;
   hostname: string;
   defaultSpaceId: string;
   customDomain: string;
@@ -52,6 +55,9 @@ export interface IPublicWorkspace {
   id: string;
   name: string;
   logo: string;
+  favicon?: string;
+  icon?: string;
+  brandName?: string;
   hostname: string;
   enforceSso: boolean;
   authProviders: IAuthProvider[];

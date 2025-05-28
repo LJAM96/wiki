@@ -270,6 +270,7 @@ export interface WorkspaceInvitations {
 
 export interface Workspaces {
   billingEmail: string | null;
+  brandName: string | null;
   createdAt: Generated<Timestamp>;
   customDomain: string | null;
   defaultRole: Generated<string>;
@@ -282,6 +283,8 @@ export interface Workspaces {
   id: Generated<string>;
   licenseKey: string | null;
   logo: string | null;
+  favicon: string | null;
+  icon: string | null;
   name: string | null;
   plan: string | null;
   settings: Json | null;

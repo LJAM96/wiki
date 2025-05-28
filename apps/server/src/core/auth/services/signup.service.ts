@@ -38,33 +38,31 @@ export class SignupService {
 
     return await executeTx(
       this.db,
-      async (trx) => {
+      async (innerTrx) => {
         // create user
         const user = await this.userRepo.insertUser(
           {
             ...createUserDto,
             workspaceId: workspaceId,
           },
-          trx,
+          innerTrx,
         );
 
         // add user to workspace
         await this.workspaceService.addUserToWorkspace(
-          user.id,
+          user,
           workspaceId,
-          undefined,
-          trx,
+          innerTrx,
         );
 
         // add user to default group
         await this.groupUserRepo.addUserToDefaultGroup(
           user.id,
           workspaceId,
-          trx,
+          innerTrx,
         );
         return user;
       },
-      trx,
     );
   }
 
@@ -77,7 +75,7 @@ export class SignupService {
 
     await executeTx(
       this.db,
-      async (trx) => {
+      async (innerTrx) => {
         // create user
         user = await this.userRepo.insertUser(
           {
@@ -87,7 +85,7 @@ export class SignupService {
             role: UserRole.OWNER,
             emailVerifiedAt: new Date(),
           },
-          trx,
+          innerTrx,
         );
 
         // create workspace with full setup
@@ -96,15 +94,13 @@ export class SignupService {
         };
 
         workspace = await this.workspaceService.create(
-          user,
           workspaceData,
-          trx,
+          innerTrx,
         );
 
         user.workspaceId = workspace.id;
         return user;
       },
-      trx,
     );
 
     return { user, workspace };

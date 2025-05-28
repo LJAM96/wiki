@@ -1,17 +1,40 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateWorkspaceDto } from './create-workspace.dto';
-import { IsArray, IsBoolean, IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString, IsBoolean, IsArray } from 'class-validator';
 
-export class UpdateWorkspaceDto extends PartialType(CreateWorkspaceDto) {
+export class UpdateWorkspaceDto {
   @IsOptional()
   @IsString()
-  logo: string;
+  name?: string;
 
   @IsOptional()
-  @IsArray()
-  emailDomains: string[];
+  @IsString()
+  description?: string;
+
+  @IsOptional()
+  @IsString()
+  logo?: string;
+
+  @IsOptional()
+  @IsString()
+  favicon?: string;
+
+  @IsOptional()
+  @IsString()
+  icon?: string;
+
+  @IsOptional()
+  @IsString()
+  brandName?: string;
+
+  @IsOptional()
+  @IsString()
+  hostname?: string;
 
   @IsOptional()
   @IsBoolean()
-  enforceSso: boolean;
+  enforceSso?: boolean;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  emailDomains?: string[];
 }

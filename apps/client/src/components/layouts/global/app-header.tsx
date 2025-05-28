@@ -14,6 +14,7 @@ import SidebarToggle from "@/components/ui/sidebar-toggle-button.tsx";
 import { useTranslation } from "react-i18next";
 import useTrial from "@/ee/hooks/use-trial.tsx";
 import { isCloud } from "@/lib/config.ts";
+import { useBrandName } from "@/hooks/use-brand-name.tsx";
 
 const links = [{ link: APP_ROUTE.HOME, label: "Home" }];
 
@@ -27,6 +28,7 @@ export function AppHeader() {
   const { isTrial, trialDaysLeft } = useTrial();
 
   const isHomeRoute = location.pathname.startsWith("/home");
+  const brandName = useBrandName();
 
   const items = links.map((link) => (
     <Link key={link.label} to={link.link} className={classes.link}>
@@ -69,7 +71,7 @@ export function AppHeader() {
             component={Link}
             to="/home"
           >
-            Docmost
+            {brandName}
           </Text>
 
           <Group ml={50} gap={5} className={classes.links} visibleFrom="sm">

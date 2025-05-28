@@ -19,6 +19,7 @@ WORKDIR /app
 
 # Copy apps
 COPY --from=builder /app/apps/server/dist /app/apps/server/dist
+COPY --from=builder /app/apps/server/src /app/apps/server/src
 COPY --from=builder /app/apps/client/dist /app/apps/client/dist
 COPY --from=builder /app/apps/server/package.json /app/apps/server/package.json
 
@@ -35,11 +36,12 @@ COPY --from=builder /app/patches /app/patches
 
 RUN npm install -g pnpm@10.4.0
 
+# Install all dependencies (including dev) for migration support
+RUN pnpm install --frozen-lockfile
+
 RUN chown -R node:node /app
 
 USER node
-
-RUN pnpm install --frozen-lockfile --prod
 
 RUN mkdir -p /app/data/storage
 

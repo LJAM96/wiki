@@ -1,0 +1,8 @@
+/* Ensure the main content area background follows the theme */
+.mantine-AppShell-main {
+  background-color: var(--mantine-color-body) !important;
+}
+
+body {
+  background-color: var(--mantine-color-body) !important;
+}

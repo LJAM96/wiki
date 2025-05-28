@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectKysely } from 'nestjs-kysely';
-import { KyselyDB, KyselyTransaction } from '../../types/kysely.types';
-import { dbOrTx } from '../../utils';
+import { KyselyDB, KyselyTransaction } from '@docmost/db/types/kysely.types';
+import { dbOrTx } from '@docmost/db/utils';
 import {
   InsertableWorkspace,
   UpdatableWorkspace,
@@ -10,150 +10,225 @@ import {
 import { ExpressionBuilder, sql } from 'kysely';
 import { DB, Workspaces } from '@docmost/db/types/db';
 
-@Injectable()
 export class WorkspaceRepo {
+  constructor(@InjectKysely() private db: KyselyDB) {}
+
   public baseFields: Array<keyof Workspaces> = [
     'id',
     'name',
     'description',
     'logo',
+    'favicon',
+    'icon',
+    'brandName',
     'hostname',
     'customDomain',
-    'settings',
-    'defaultRole',
-    'emailDomains',
     'defaultSpaceId',
-    'createdAt',
-    'updatedAt',
-    'deletedAt',
-    'stripeCustomerId',
+    'settings',
     'status',
+    'enforceSso',
     'billingEmail',
     'trialEndAt',
-    'enforceSso',
+    'createdAt',
+    'updatedAt',
+    'emailDomains',
     'plan',
+    'licenseKey',
   ];
-  constructor(@InjectKysely() private readonly db: KyselyDB) {}
 
-  async findById(
-    workspaceId: string,
-    opts?: {
-      withLock?: boolean;
-      withMemberCount?: boolean;
-      withLicenseKey?: boolean;
-      trx?: KyselyTransaction;
-    },
-  ): Promise<Workspace> {
-    const db = dbOrTx(this.db, opts?.trx);
-
-    let query = db
-      .selectFrom('workspaces')
-      .select(this.baseFields)
-      .where('id', '=', workspaceId);
-
-    if (opts?.withMemberCount) {
-      query = query.select(this.withMemberCount);
-    }
-
-    if (opts?.withLicenseKey) {
-      query = query.select('licenseKey');
-    }
-
-    if (opts?.withLock && opts?.trx) {
-      query = query.forUpdate();
-    }
-
-    return query.executeTakeFirst();
-  }
-
-  async findFirst(): Promise<Workspace> {
-    return await this.db
-      .selectFrom('workspaces')
-      .selectAll()
-      .orderBy('createdAt', 'asc')
-      .limit(1)
-      .executeTakeFirst();
-  }
-
-  async findByHostname(hostname: string): Promise<Workspace> {
-    return await this.db
-      .selectFrom('workspaces')
-      .selectAll()
-      .where(sql`LOWER(hostname)`, '=', sql`LOWER(${hostname})`)
-      .executeTakeFirst();
-  }
-
-  async hostnameExists(
-    hostname: string,
-    trx?: KyselyTransaction,
-  ): Promise<boolean> {
-    if (hostname?.length < 1) return false;
-
-    const db = dbOrTx(this.db, trx);
-    let { count } = await db
-      .selectFrom('workspaces')
-      .select((eb) => eb.fn.count('id').as('count'))
-      .where(sql`LOWER(hostname)`, '=', sql`LOWER(${hostname})`)
-      .executeTakeFirst();
-    count = count as number;
-    return count != 0;
-  }
-
-  async updateWorkspace(
-    updatableWorkspace: UpdatableWorkspace,
-    workspaceId: string,
+  async create(
+    data: InsertableWorkspace,
     trx?: KyselyTransaction,
   ): Promise<Workspace> {
     const db = dbOrTx(this.db, trx);
+
     return db
-      .updateTable('workspaces')
-      .set({ ...updatableWorkspace, updatedAt: new Date() })
-      .where('id', '=', workspaceId)
-      .returning(this.baseFields)
-      .executeTakeFirst();
+      .insertInto('workspaces')
+      .values(data)
+      .returningAll()
+      .executeTakeFirstOrThrow();
   }
 
   async insertWorkspace(
-    insertableWorkspace: InsertableWorkspace,
+    data: InsertableWorkspace,
+    trx?: KyselyTransaction,
+  ): Promise<Workspace> {
+    return this.create(data, trx);
+  }
+
+  async findById(
+    workspaceId: string,
+    trx?: KyselyTransaction,
+  ): Promise<Workspace | null> {
+    const db = dbOrTx(this.db, trx);
+
+    return db
+      .selectFrom('workspaces')
+      .select(this.baseFields)
+      .where('id', '=', workspaceId)
+      .where('deletedAt', 'is', null)
+      .executeTakeFirst() as Promise<Workspace | null>;
+  }
+
+  async findFirst(): Promise<Workspace | null> {
+    return this.db
+      .selectFrom('workspaces')
+      .select(this.baseFields)
+      .where('deletedAt', 'is', null)
+      .limit(1)
+      .executeTakeFirst() as Promise<Workspace | null>;
+  }
+
+  async findByHostname(hostname: string): Promise<Workspace | null> {
+    return this.db
+      .selectFrom('workspaces')
+      .select(this.baseFields)
+      .where('hostname', '=', hostname)
+      .where('deletedAt', 'is', null)
+      .executeTakeFirst() as Promise<Workspace | null>;
+  }
+
+  async findByCustomDomain(customDomain: string): Promise<Workspace | null> {
+    return this.db
+      .selectFrom('workspaces')
+      .select(this.baseFields)
+      .where('customDomain', '=', customDomain)
+      .where('deletedAt', 'is', null)
+      .executeTakeFirst() as Promise<Workspace | null>;
+  }
+
+  async findMany(paginationOptions: any): Promise<any> {
+    const page = paginationOptions.page || 1;
+    const limit = paginationOptions.limit || 10;
+    const offset = (page - 1) * limit;
+
+    const workspaces = await this.db
+      .selectFrom('workspaces')
+      .select(this.baseFields)
+      .where('deletedAt', 'is', null)
+      .orderBy('createdAt', 'asc')
+      .limit(limit)
+      .offset(offset)
+      .execute() as Workspace[];
+    
+    const totalQuery = await this.db
+      .selectFrom('workspaces')
+      .select((eb: ExpressionBuilder<DB, 'workspaces'>) => [
+        eb.fn.count<number>('id').as('count'),
+      ])
+      .where('deletedAt', 'is', null)
+      .executeTakeFirst();
+
+    const total = Number(totalQuery?.count || 0);
+
+    return {
+      data: workspaces,
+      meta: {
+        page,
+        limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+  }
+
+  async findAll(): Promise<Workspace[]> {
+    return this.db
+      .selectFrom('workspaces')
+      .select(this.baseFields)
+      .where('deletedAt', 'is', null)
+      .execute() as Promise<Workspace[]>;
+  }
+
+  async update(
+    workspaceId: string,
+    data: UpdatableWorkspace,
     trx?: KyselyTransaction,
   ): Promise<Workspace> {
     const db = dbOrTx(this.db, trx);
+
     return db
-      .insertInto('workspaces')
-      .values(insertableWorkspace)
-      .returning(this.baseFields)
-      .executeTakeFirst();
+      .updateTable('workspaces')
+      .set(data)
+      .where('id', '=', workspaceId)
+      .returningAll()
+      .executeTakeFirstOrThrow();
+  }
+
+  async updateWorkspace(
+    data: UpdatableWorkspace,
+    workspaceId: string,
+    trx?: KyselyTransaction,
+  ): Promise<Workspace> {
+    return this.update(workspaceId, data, trx);
+  }
+
+  async delete(workspaceId: string, trx?: KyselyTransaction): Promise<void> {
+    const db = dbOrTx(this.db, trx);
+
+    await db
+      .updateTable('workspaces')
+      .set({ deletedAt: new Date() })
+      .where('id', '=', workspaceId)
+      .execute();
   }
 
   async count(): Promise<number> {
-    const { count } = await this.db
+    const result = await this.db
       .selectFrom('workspaces')
-      .select((eb) => eb.fn.count('id').as('count'))
+      .select((eb: ExpressionBuilder<DB, 'workspaces'>) => [
+        eb.fn.count<number>('id').as('count'),
+      ])
+      .where('deletedAt', 'is', null)
       .executeTakeFirst();
-    return count as number;
-  }
 
-  withMemberCount(eb: ExpressionBuilder<DB, 'workspaces'>) {
-    return eb
-      .selectFrom('users')
-      .select((eb) => eb.fn.countAll().as('count'))
-      .where('users.deactivatedAt', 'is', null)
-      .where('users.deletedAt', 'is', null)
-      .whereRef('users.workspaceId', '=', 'workspaces.id')
-      .as('memberCount');
+    return Number(result?.count || 0);
   }
 
   async getActiveUserCount(workspaceId: string): Promise<number> {
-    const users = await this.db
+    const result = await this.db
       .selectFrom('users')
-      .select(['id', 'deactivatedAt', 'deletedAt'])
+      .select((eb: ExpressionBuilder<DB, 'users'>) => [
+        eb.fn.count<number>('id').as('count'),
+      ])
       .where('workspaceId', '=', workspaceId)
-      .execute();
+      .where('deletedAt', 'is', null)
+      .where('deactivatedAt', 'is', null)
+      .executeTakeFirst();
 
-    const activeUsers = users.filter(
-      (user) => user.deletedAt === null && user.deactivatedAt === null,
-    );
+    return Number(result?.count || 0);
+  }
 
-    return activeUsers.length;
+  async exists(): Promise<boolean> {
+    const result = await this.db
+      .selectFrom('workspaces')
+      .select('id')
+      .where('deletedAt', 'is', null)
+      .limit(1)
+      .executeTakeFirst();
+
+    return !!result;
+  }
+
+  async hostnameExists(hostname: string): Promise<boolean> {
+    const result = await this.db
+      .selectFrom('workspaces')
+      .select('id')
+      .where('hostname', '=', hostname)
+      .where('deletedAt', 'is', null)
+      .limit(1)
+      .executeTakeFirst();
+
+    return !!result;
+  }
+
+  async getWorkspacesByUserId(userId: string): Promise<Workspace[]> {
+    return this.db
+      .selectFrom('workspaces')
+      .innerJoin('users', 'users.workspaceId', 'workspaces.id')
+      .select(this.baseFields.map((field) => `workspaces.${field}` as any))
+      .where('users.id', '=', userId)
+      .where('workspaces.deletedAt', 'is', null)
+      .where('users.deletedAt', 'is', null)
+      .execute() as Promise<Workspace[]>;
   }
 }

@@ -137,8 +137,7 @@ export class AttachmentService {
           type,
           userId,
           workspaceId,
-          trx,
-        });
+        }, trx);
 
         if (type === AttachmentType.Avatar) {
           const user = await this.userRepo.findById(userId, workspaceId, {
@@ -154,9 +153,7 @@ export class AttachmentService {
             trx,
           );
         } else if (type === AttachmentType.WorkspaceLogo) {
-          const workspace = await this.workspaceRepo.findById(workspaceId, {
-            trx,
-          });
+const workspace = await this.workspaceRepo.findById(workspaceId, trx);
 
           oldFileName = workspace.logo;
 
@@ -226,8 +223,7 @@ export class AttachmentService {
     workspaceId: string;
     pageId?: string;
     spaceId?: string;
-    trx?: KyselyTransaction;
-  }): Promise<Attachment> {
+  }, trx?: KyselyTransaction): Promise<Attachment> {
     const {
       attachmentId,
       preparedFile,
@@ -237,7 +233,6 @@ export class AttachmentService {
       workspaceId,
       pageId,
       spaceId,
-      trx,
     } = opts;
     return this.attachmentRepo.insertAttachment(
       {
